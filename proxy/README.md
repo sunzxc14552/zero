@@ -59,7 +59,7 @@ GitHub Pages（前端）  →  腾讯云云函数（函数 URL）  →  博查 A
 | 别名/版本 | `$DEFAULT` |
 | 公网访问 | **开启** |
 | 授权类型 | **开放**（允许匿名访问） |
-| CORS | **开启**，允许来源 `*`，方法勾选 **GET** 和 **OPTIONS** |
+| CORS | **开启**，来源填 `https://sunzxc14552.github.io`（必须带 `https://`，不能填 `*`），方法勾选 **GET** 和 **OPTIONS** |
 
 4. 点 **确定**
 
@@ -134,6 +134,16 @@ API 网关已下线，请改用 **函数 URL**（第五步）。
 
 到 https://open.bochaai.com/api-keys 重新创建密钥，更新云函数环境变量。
 
-### CORS 报错
+### CORS 报错 `Origin must start with http:// or https://`
 
-确认函数 URL 的 CORS 已开启，且允许方法包含 **GET** 和 **OPTIONS**。
+腾讯云函数 URL 的 CORS 来源**不能填 `*`**，必须填完整地址，例如：
+
+```
+https://sunzxc14552.github.io
+```
+
+本地开发可额外添加：
+
+```
+http://localhost:5173
+```

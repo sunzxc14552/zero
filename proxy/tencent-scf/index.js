@@ -95,8 +95,11 @@ exports.main_handler = async (event) => {
     }
   }
 
-  const path = event.path || event.requestContext?.path || ''
-  if (!path.endsWith('/api/search')) {
+  const path = event.path || event.requestContext?.path || '/'
+  const isSearch =
+    path === '/' || path === '/api/search' || path.endsWith('/api/search')
+
+  if (!isSearch) {
     return jsonResponse(404, { error: 'Not Found' })
   }
 

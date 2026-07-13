@@ -59,9 +59,19 @@ GitHub Pages（前端）  →  腾讯云云函数（函数 URL）  →  博查 A
 | 别名/版本 | `$DEFAULT` |
 | 公网访问 | **开启** |
 | 授权类型 | **开放**（允许匿名访问） |
-| CORS | **开启**，来源填 `https://sunzxc14552.github.io`（必须带 `https://`，不能填 `*`），方法勾选 **GET** 和 **OPTIONS** |
+| CORS | **开启**，按下方「CORS 逐项填写」配置 |
 
 4. 点 **确定**
+
+#### CORS 逐项填写（照抄，不要留空行）
+
+| 字段 | 填什么 |
+|------|--------|
+| 来源 Origins | `https://sunzxc14552.github.io` |
+| 方法 Methods | 只勾选 **GET**、**OPTIONS** |
+| 请求头 Headers | **留空，不要添加任何项**（若有空行请删掉） |
+| 暴露头 ExposeHeaders | **留空** |
+| 允许凭证 Credentials | **关闭** |
 
 ### 第六步：复制访问地址
 
@@ -133,6 +143,15 @@ API 网关已下线，请改用 **函数 URL**（第五步）。
 ### API Key 无效
 
 到 https://open.bochaai.com/api-keys 重新创建密钥，更新云函数环境变量。
+
+### CORS 报错 `Invalid Header`
+
+说明 Headers 里有一条**空内容**。处理方式：
+
+1. 打开 CORS 配置
+2. 在 **Headers / 请求头** 区域，**删除所有行**（包括空白行）
+3. 不要点「添加」留空项
+4. 只保留 Origins 和 Methods，重新提交
 
 ### CORS 报错 `Origin must start with http:// or https://`
 

@@ -11,6 +11,19 @@ export class SearchError extends Error {
 const apiKey = import.meta.env.VITE_SEARCH_API_KEY as string | undefined
 const apiUrl = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '')
 
+function validateApiUrl(url: string): void {
+  if (url.includes('dash.cloudflare.com')) {
+    throw new SearchError(
+      'VITE_API_URL 填错了：不能使用 Cloudflare 控制台地址。请填写 Worker 公网地址，例如 https://bold-base-16cb.xxx.workers.dev',
+    )
+  }
+  if (!url.includes('.workers.dev') && !url.includes('localhost')) {
+    throw new SearchError(
+      'VITE_API_URL 格式不正确。请填写 Worker 公网地址，例如 https://你的worker名称.xxx.workers.dev',
+    )
+  }
+}
+
 function shouldUseLocalProxy(): boolean {
   if (import.meta.env.PROD) return false
   if (typeof window === 'undefined') return import.meta.env.DEV
@@ -67,6 +80,7 @@ export async function search(query: string, category: Category = 'all'): Promise
   }
 
   if (apiUrl) {
+    validateApiUrl(apiUrl)
     return searchViaProxy(apiUrl, trimmed, category)
   }
 

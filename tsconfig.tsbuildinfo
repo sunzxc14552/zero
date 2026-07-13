@@ -1,1 +1,1 @@
-{"root":["./src/app.tsx","./src/data.ts","./src/hooks.ts","./src/main.tsx","./src/search.ts","./src/types.ts","./src/vite-env.d.ts","./src/components/categoryfilter.tsx","./src/components/searchbar.tsx","./src/components/searchresults.tsx","./src/lib/bocha-search.ts"],"version":"5.7.3"}
+{"root":["./src/App.tsx","./src/data.ts","./src/hooks.ts","./src/main.tsx","./src/search.ts","./src/types.ts","./src/vite-env.d.ts","./src/components/CategoryFilter.tsx","./src/components/SearchBar.tsx","./src/components/SearchResults.tsx","./src/lib/bocha-search.ts"],"version":"5.7.3"}

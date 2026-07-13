@@ -14,12 +14,12 @@ const apiUrl = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/
 function validateApiUrl(url: string): void {
   if (url.includes('dash.cloudflare.com')) {
     throw new SearchError(
-      'VITE_API_URL 填错了：不能使用 Cloudflare 控制台地址。请填写 Worker 公网地址，例如 https://bold-base-16cb.xxx.workers.dev',
+      'VITE_API_URL 填错了：不能使用 Cloudflare 控制台地址。请参考 proxy/README.md 配置国内代理',
     )
   }
-  if (!url.includes('.workers.dev') && !url.includes('localhost')) {
+  if (url.includes('workers.dev')) {
     throw new SearchError(
-      'VITE_API_URL 格式不正确。请填写 Worker 公网地址，例如 https://你的worker名称.xxx.workers.dev',
+      'workers.dev 在国内通常无法访问。请改用腾讯云云函数代理，参考 proxy/README.md',
     )
   }
 }
@@ -35,7 +35,15 @@ function shouldUseLocalProxy(): boolean {
 async function searchViaProxy(endpoint: string, query: string, category: Category): Promise<SearchResult> {
   const start = performance.now()
   const params = new URLSearchParams({ q: query, cat: category })
-  const res = await fetch(`${endpoint}/api/search?${params}`)
+
+  let res: Response
+  try {
+    res = await fetch(`${endpoint}/api/search?${params}`)
+  } catch {
+    throw new SearchError(
+      '无法连接搜索代理，请确认 VITE_API_URL 在国内可访问。参考 proxy/README.md 部署腾讯云云函数',
+    )
+  }
 
   if (!res.ok) {
     const body = await res.json().catch(() => ({}))
@@ -52,7 +60,7 @@ async function searchViaProxy(endpoint: string, query: string, category: Categor
 async function searchDirect(query: string, category: Category): Promise<SearchResult> {
   if (!apiKey?.trim()) {
     throw new SearchError(
-      '未配置搜索代理。请按 worker/README.md 部署 Cloudflare Worker，并在 GitHub Secrets 中添加 VITE_API_URL',
+      '未配置搜索代理。请按 proxy/README.md 部署腾讯云云函数，并在 GitHub Secrets 中添加 VITE_API_URL',
     )
   }
 
@@ -62,7 +70,7 @@ async function searchDirect(query: string, category: Category): Promise<SearchRe
     const message = err instanceof Error ? err.message : '搜索失败'
     if (message.includes('Failed to fetch') || message.includes('NetworkError')) {
       throw new SearchError(
-        '浏览器跨域限制，请部署 Cloudflare Worker 代理并在 GitHub Secrets 中设置 VITE_API_URL',
+        '浏览器跨域限制，请部署国内搜索代理并在 GitHub Secrets 中设置 VITE_API_URL，参考 proxy/README.md',
       )
     }
     throw new SearchError(message)

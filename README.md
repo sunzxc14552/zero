@@ -5,29 +5,21 @@
 ## 部署架构
 
 ```
-GitHub Pages（前端）  →  Cloudflare Worker（API 代理）  →  博查 API
+GitHub Pages（前端）  →  国内 API 代理（腾讯云云函数）  →  博查 API
 ```
 
-博查 API 不支持浏览器跨域，因此生产环境需要通过 Cloudflare Worker 代理。
+博查 API 不支持浏览器跨域，生产环境需要部署搜索代理。**国内用户请使用腾讯云云函数**（`workers.dev` 在国内经常超时）。
 
-## 一、部署 Cloudflare Worker（免费）
+详细步骤见 **[proxy/README.md](proxy/README.md)**
 
-### 1. 注册 [Cloudflare](https://dash.cloudflare.com/) 账号
+## 一、部署搜索代理（国内推荐：腾讯云云函数）
 
-### 2. 安装 Wrangler 并部署
-
-```bash
-npm install -g wrangler
-cd worker
-wrangler login
-wrangler secret put SEARCH_API_KEY   # 填入博查 API Key
-wrangler deploy
+按 [proxy/README.md](proxy/README.md) 部署腾讯云云函数，获取代理地址，例如：
+```
+https://service-xxxxx-xxxxxxxx.gz.apigw.tencentcs.com/release
 ```
 
-部署成功后会显示 Worker 地址，例如：
-```
-https://zhisou-search-proxy.你的用户名.workers.dev
-```
+> 海外用户也可使用 [worker/README.md](worker/README.md) 部署 Cloudflare Worker，但国内访问可能超时。
 
 ## 二、部署 GitHub Pages
 
@@ -45,7 +37,7 @@ git push
 
 | Name | Value |
 |------|-------|
-| `VITE_API_URL` | Worker 地址，如 `https://zhisou-search-proxy.xxx.workers.dev` |
+| `VITE_API_URL` | 代理地址，如 `https://service-xxx.gz.apigw.tencentcs.com/release` |
 
 ### 3. 开启 GitHub Pages
 
@@ -86,15 +78,15 @@ npm run dev
 ### 搜索 404 `/api/search`
 请确保已配置 `VITE_API_URL` 并重新部署。GitHub Pages 本身没有后端 API。
 
+### 连接超时 `ERR_CONNECTION_TIMED_OUT`
+`workers.dev` 在国内通常无法访问，请改用腾讯云云函数，见 [proxy/README.md](proxy/README.md)。
+
 ### API Key 无效
-在 Cloudflare Worker 中重新设置 Secret：
-```bash
-wrangler secret put SEARCH_API_KEY
-```
+在云函数环境变量中更新 `SEARCH_API_KEY`。
 
 ## 技术栈
 
 - React 19 + TypeScript + Vite 6
 - GitHub Actions + GitHub Pages
-- Cloudflare Workers
+- 腾讯云云函数（国内代理）
 - 博查 Web Search API

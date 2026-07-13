@@ -1,6 +1,9 @@
-# Cloudflare Worker 部署指南（5 分钟）
+# Cloudflare Worker 部署指南（海外用户）
 
-GitHub Pages 是静态网站，搜索必须通过 Worker 代理。按下面步骤操作一次即可。
+> **国内用户请改用 [proxy/README.md](../proxy/README.md) 部署腾讯云云函数。**  
+> `*.workers.dev` 在国内经常 `ERR_CONNECTION_TIMED_OUT`。
+
+GitHub Pages 是静态网站，搜索必须通过代理。按下面步骤操作一次即可。
 
 ## 第一步：注册 Cloudflare
 
